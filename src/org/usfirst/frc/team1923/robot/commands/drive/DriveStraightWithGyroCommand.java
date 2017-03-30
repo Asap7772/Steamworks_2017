@@ -34,12 +34,12 @@ public class DriveStraightWithGyroCommand extends Command {
 
     }
 
-    /* The P-Only Algorithm
-     *  ==================== 
-     *  The P-Only controller computes a CO action every loop sample time T as: CO = CObias + Kc∙e(t), Where:
-     *  CObias = controller bias or null value
-     *  Kc = controller gain, a tuning parameter 
-     *  e(t) = controller error = SP – PV (SP = set point, PV = measured process variable)
+    /*
+     * The P-Only Algorithm ==================== The P-Only controller computes
+     * a CO action every loop sample time T as: CO = CObias + Kc∙e(t), Where:
+     * CObias = controller bias or null value Kc = controller gain, a tuning
+     * parameter e(t) = controller error = SP - PV (SP = set point, PV =
+     * measured process variable)
      */
 
     // if (error > 0)
@@ -49,8 +49,8 @@ public class DriveStraightWithGyroCommand extends Command {
         double process = this.gyro.GetFusedHeading(new FusionStatus()) % 360;
         double error = head - process;
         if (Math.abs(error) > this.TOLERANCE) {
-            leftV = this.CONTROLLER_BIAS + this.P_CONST * error;
-            //keeps it in [-12, 12]
+            leftV += CONTROLLER_BIAS + P_CONST * error;
+            // keeps it in [-12, 12]
             if (leftV > 12)
                 leftV = 12;
             else if (leftV < -12)

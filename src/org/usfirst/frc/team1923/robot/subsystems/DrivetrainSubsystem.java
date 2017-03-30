@@ -67,7 +67,7 @@ public class DrivetrainSubsystem extends Subsystem {
 
         setToFollow();
         configPID();
-        setVoltageRampRates();
+        TalonsInit();
     }
 
     private void setToFollow() {
@@ -304,7 +304,11 @@ public class DrivetrainSubsystem extends Subsystem {
         return distanceToRotation(dist) - rightTalons[0].getEncPosition();
     }
 
-    public void setVoltageRampRates() {
+    public void TalonsInit() {
+        leftTalons[0].configNominalOutputVoltage(+0.0f, -0.0f);
+        leftTalons[0].configPeakOutputVoltage(+12.0f, -12.0f);
+        rightTalons[0].configNominalOutputVoltage(+0.0f, -0.0f);
+        rightTalons[0].configPeakOutputVoltage(+12.0f, -12.0f);
         rightTalons[0].setCloseLoopRampRate(VOLTAGE_RAMP_RATE);
         leftTalons[0].setCloseLoopRampRate(VOLTAGE_RAMP_RATE);
     }
