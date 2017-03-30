@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveStraightWithGyroCommand extends Command {
 
-    public double leftV = 6, rightV = 6;
+    public double leftV = 8, rightV = 8;
     private PigeonImu gyro;
     private double head;
 
     // TODO tune values
     private final double P_CONST = 0.070;
-    private final double CONTROLLER_BIAS = 6;
+    private final double CONTROLLER_BIAS = 8;
     private final double TOLERANCE = 0.100;
 
     public DriveStraightWithGyroCommand(double distance) {
@@ -35,13 +35,14 @@ public class DriveStraightWithGyroCommand extends Command {
 
     }
 
-    /*  The P-Only Algorithm for Gyro
+    /*
+     * The Proportional Algorithm for Gyro
      *  ============================= 
-     *  The P-Only controller computes a output action every loop sample time T as: 
-     *  Final Value = bias + C ∙ e, Where: 
-     *  bias = controller bias or null value 
-     *  C = constant parameter 
-     *  e = controller error = SP - PV (SP = set point, PV = measured process variable)
+     *  This gyro Proportional-Only controller computes a output action every loop sample time T as:
+     *   Final Value = bias + C ∙ e, Where: 
+     *   bias = controller bias or null value 
+     *   C = constant parameter 
+     *   e = controller error = SP - PV (SP = set point, PV = measured process variable)
      */
 
     protected void pHeading() {
@@ -49,10 +50,9 @@ public class DriveStraightWithGyroCommand extends Command {
         double error = head - process;
         if (Math.abs(error) > this.TOLERANCE) {
             // Updates left voltage value
+            // will allow me to change the voltage based on error
             leftV = CONTROLLER_BIAS + P_CONST * error;
-            // leftV += CONTROLLER_BIAS + P_CONST * error; // TODO see if this is better
-            //will allow me to change voltagebased on error
-            
+
             // Keeps Left Voltage in the range: [-12, 12]
             leftV = Math.min(12, leftV);
             leftV = Math.max(-12, leftV);
