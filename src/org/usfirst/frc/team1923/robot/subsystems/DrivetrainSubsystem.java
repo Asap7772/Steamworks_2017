@@ -293,11 +293,11 @@ public class DrivetrainSubsystem extends Subsystem {
     }
 
     public double getManualErrorLeft() {
-        return angleToDistance(dist) - leftTalons[0].getEncPosition();
+        return distanceToRotation(dist) - leftTalons[0].getEncPosition();
     }
 
     public double getManualErrorRight() {
-        return angleToDistance(dist) - rightTalons[0].getEncPosition();
+        return distanceToRotation(dist) - rightTalons[0].getEncPosition();
     }
 
     public void stop() {
