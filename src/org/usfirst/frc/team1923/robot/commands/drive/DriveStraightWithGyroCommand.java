@@ -10,13 +10,14 @@ import com.ctre.PigeonImu.FusionStatus;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveStraightWithGyroCommand extends Command {
+
     public double leftV = 6, rightV = 6;
     private PigeonImu gyro;
     private double head;
 
-    // TODO tune values 
+    // TODO tune values
     private final double P_CONST = 0.070;
-    private final double CONTROLLER_BIAS = 0;
+    private final double CONTROLLER_BIAS = 6;
     private final double TOLERANCE = 0.100;
 
     public DriveStraightWithGyroCommand(double distance) {
@@ -34,24 +35,26 @@ public class DriveStraightWithGyroCommand extends Command {
 
     }
 
-    /*
-     * The P-Only Algorithm for Gyro
-     * ============================= 
-     * The P-Only controller computes a CO action every loop sample time T as: 
-     * Final Value = bias + C ∙ e, Where:
-     * bias = controller bias or null value 
-     * C = P Constant
-     * parameter e = controller error = SP - PV (SP = set point, PV = measured process variable)
+    /*  The P-Only Algorithm for Gyro
+     *  ============================= 
+     *  The P-Only controller computes a output action every loop sample time T as: 
+     *  Final Value = bias + C ∙ e, Where: 
+     *  bias = controller bias or null value 
+     *  C = constant parameter 
+     *  e = controller error = SP - PV (SP = set point, PV = measured process variable)
      */
 
     protected void pHeading() {
         double process = this.gyro.GetFusedHeading(new FusionStatus()) % 360;
         double error = head - process;
         if (Math.abs(error) > this.TOLERANCE) {
-            // Updates leftV
-            leftV += CONTROLLER_BIAS + P_CONST * error;
+            // Updates left voltage value
+            leftV = CONTROLLER_BIAS + P_CONST * error;
+            // leftV += CONTROLLER_BIAS + P_CONST * error; // TODO see if this is better
+            //will allow me to change voltagebased on error
+            
             // Keeps Left Voltage in the range: [-12, 12]
-            leftV =  Math.min(12, leftV);
+            leftV = Math.min(12, leftV);
             leftV = Math.max(-12, leftV);
         }
         Robot.driveSubSys.drive(leftV, rightV, TalonControlMode.Voltage);
