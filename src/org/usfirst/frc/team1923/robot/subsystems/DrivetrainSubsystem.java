@@ -36,6 +36,9 @@ public class DrivetrainSubsystem extends Subsystem {
     private static final double DRIVE_CONSTANT = 1;
     private static final double TURNING_CONSTANT = 1.12;
 
+    // ramp rate for voltage
+    private static final double VOLTAGE_RAMP_RATE = 6.0;
+
     // Arrays of talons to group them together
     // The first element will always be the master Talon, the subsequent ones
     // will follow
@@ -64,6 +67,7 @@ public class DrivetrainSubsystem extends Subsystem {
 
         setToFollow();
         configPID();
+        setVoltageRampRates();
     }
 
     private void setToFollow() {
@@ -298,6 +302,11 @@ public class DrivetrainSubsystem extends Subsystem {
 
     public double getManualErrorRight() {
         return distanceToRotation(dist) - rightTalons[0].getEncPosition();
+    }
+
+    public void setVoltageRampRates() {
+        rightTalons[0].setCloseLoopRampRate(VOLTAGE_RAMP_RATE);
+        leftTalons[0].setCloseLoopRampRate(VOLTAGE_RAMP_RATE);
     }
 
     public void stop() {

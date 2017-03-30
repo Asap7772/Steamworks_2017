@@ -35,7 +35,8 @@ public class DriveStraightWithGyroCommand extends Command {
      * The P-Only Algorithm The P-Only controller computes a CO action every
      * loop sample time T as: CO = CObias + Kc∙e(t) Where: CObias = controller
      * bias or null value Kc = controller gain, a tuning parameter e(t) =
-     * controller error = SP – PV SP = set point PV = measured process variable
+     * controller error = SP – PV (SP = set point PV = measured process
+     * variable)
      */
 
     // if (error > 0)

@@ -70,7 +70,7 @@ public class Robot extends IterativeRobot {
         this.autonChooser.addObject("Vision Test", new TeleopVisionAlignCommand());
         this.autonChooser.addObject("Drive 100 inches", new DriveDistanceCommand(100));
         this.autonChooser.addObject("Drive 2 seconds", new DriveTimeCommand(1, 2));
-        this.autonChooser.addObject("Drive 50 inches", new DriveStraightWithGyroCommand(50));
+        this.autonChooser.addObject("Drive 50 inches (gyro)", new DriveStraightWithGyroCommand(50));
 
         SmartDashboard.putData("Auto Mode", this.autonChooser);
         SmartDashboard.putData("Driver", this.driverChooser);
