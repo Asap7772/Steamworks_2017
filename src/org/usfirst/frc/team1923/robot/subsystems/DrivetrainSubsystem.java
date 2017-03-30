@@ -43,6 +43,7 @@ public class DrivetrainSubsystem extends Subsystem {
     private DoubleSolenoid shifter;
     private DoubleSolenoid shiftOmnis;
     private PigeonImu imu;
+    private double dist;
 
     public DrivetrainSubsystem() {
         this.leftTalons = new CANTalon[RobotMap.LEFT_DRIVE_PORTS.length];
@@ -281,6 +282,22 @@ public class DrivetrainSubsystem extends Subsystem {
         }
 
         this.rightTalons[0].set(power);
+    }
+
+    public void driveStraightGyroDistance(double dist) {
+
+    }
+
+    public void setDistance(double d) {
+        dist = d;
+    }
+
+    public double getManualErrorLeft() {
+        return angleToDistance(dist) - leftTalons[0].getEncPosition();
+    }
+
+    public double getManualErrorRight() {
+        return angleToDistance(dist) - rightTalons[0].getEncPosition();
     }
 
     public void stop() {
