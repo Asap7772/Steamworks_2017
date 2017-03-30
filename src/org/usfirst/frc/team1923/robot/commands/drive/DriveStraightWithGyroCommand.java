@@ -10,11 +10,11 @@ import com.ctre.PigeonImu.FusionStatus;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveStraightWithGyroCommand extends Command {
-
     public double leftV = 6, rightV = 6;
     private PigeonImu gyro;
     private double head;
 
+    // TODO tune values 
     private final double P_CONST = 0.070;
     private final double CONTROLLER_BIAS = 0;
     private final double TOLERANCE = 0.100;
@@ -35,26 +35,24 @@ public class DriveStraightWithGyroCommand extends Command {
     }
 
     /*
-     * The P-Only Algorithm ==================== The P-Only controller computes
-     * a CO action every loop sample time T as: CO = CObias + Kc∙e(t), Where:
-     * CObias = controller bias or null value Kc = controller gain, a tuning
-     * parameter e(t) = controller error = SP - PV (SP = set point, PV =
-     * measured process variable)
+     * The P-Only Algorithm for Gyro
+     * ============================= 
+     * The P-Only controller computes a CO action every loop sample time T as: 
+     * Final Value = bias + C ∙ e, Where:
+     * bias = controller bias or null value 
+     * C = P Constant
+     * parameter e = controller error = SP - PV (SP = set point, PV = measured process variable)
      */
 
-    // if (error > 0)
-    // leftV *= (1 + this.P_CONST);
-    // else leftV *= (this.P_CONST);
     protected void pHeading() {
         double process = this.gyro.GetFusedHeading(new FusionStatus()) % 360;
         double error = head - process;
         if (Math.abs(error) > this.TOLERANCE) {
+            // Updates leftV
             leftV += CONTROLLER_BIAS + P_CONST * error;
-            // keeps it in [-12, 12]
-            if (leftV > 12)
-                leftV = 12;
-            else if (leftV < -12)
-                leftV = -12;
+            // Keeps Left Voltage in the range: [-12, 12]
+            leftV =  Math.min(12, leftV);
+            leftV = Math.max(-12, leftV);
         }
         Robot.driveSubSys.drive(leftV, rightV, TalonControlMode.Voltage);
     }
