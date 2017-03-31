@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveStraightWithGyroCommand extends Command {
 
-    public double leftV = 8, rightV = 8;
+    public double leftV = 6, rightV = 6;
     private PigeonImu gyro;
     private double head;
 
     // TODO tune values
     private final double P_CONST = 0.070;
-    private final double CONTROLLER_BIAS = 8;
+    private final double CONTROLLER_BIAS = 6;
     private final double TOLERANCE = 0.100;
     private final double DISTANCE;
 
@@ -34,37 +34,53 @@ public class DriveStraightWithGyroCommand extends Command {
 
     @Override
     public void initialize() {
-        System.out.println("init");
+        System.out.println("init Entered");
         print();
+        Robot.driveSubSys.resetPosition();
+        print();
+        System.out.println("init Exited");
     }
 
     /*
-     * The Proportional Algorithm for Gyro ============================= This
-     * gyro Proportional-Only controller computes a output action every loop
-     * sample time T as: Final Value = bias + C ∙ e, Where: bias = controller
-     * bias or null value C = constant parameter e = controller error = SP - PV
-     * (SP = set point, PV = measured process variable)
+     * The Proportional Algorithm for Gyro
+     *  ============================= 
+     *  This gyro Proportional-Only controller computes a output action every loop sample time T as:
+     *   Final Value = bias + C ∙ e, Where: 
+     *   bias = controller bias or null value 
+     *   C = constant parameter 
+     *   e = controller error = SP - PV (SP = set point, PV = measured process variable)
      */
 
     protected void pHeading() {
+        System.out.println("PHeading Entered");
+        print();
         double process = this.gyro.GetFusedHeading(new FusionStatus()) % 360;
         double error = head - process;
+        System.out.println("Head: " + head);
+        System.out.println("Process: " + process);
+        System.out.println("Error: " + error);
         if (Math.abs(error) > this.TOLERANCE) {
-            // Updates left voltage value
-            // will allow me to change the vol tage based on error
-            leftV = CONTROLLER_BIAS + P_CONST * error;
+            // Updates right voltage value
+            // will allow me to change the voltage based on error
+            rightV = CONTROLLER_BIAS + P_CONST * error;
 
-            // Keeps Left Voltage in the range: [-12, 12]
-            leftV = Math.min(12, leftV);
-            leftV = Math.max(-12, leftV);
+            System.out.println("RightV initial: " + this.rightV);
+            // Keeps Right Voltage in the range: [-12, 12]
+            rightV = Math.min(12, rightV);
+            rightV = Math.max(-12, rightV);
+            System.out.println("RightV changed: " + this.rightV);
         }
+        System.out.println("PHeading Exited");
+        print();
     }
 
     @Override
     public void execute() {
+        System.out.println("Execute Entered");
+        print();
         this.pHeading();
         Robot.driveSubSys.drive(leftV, rightV, TalonControlMode.Voltage);
-        print();
+        System.out.println("Execute Exited");
     }
 
     public void print() {
@@ -74,6 +90,10 @@ public class DriveStraightWithGyroCommand extends Command {
         System.out.println(" Right Error: " + (Robot.driveSubSys.getRightPosition() - dist));
         System.out.println(" Left Voltage: " + (this.leftV));
         System.out.println(" Right Voltage: " + (this.rightV));
+        System.out.println("Left Position: " + Robot.driveSubSys.getLeftPosition());
+        System.out.println("Right Position: " + Robot.driveSubSys.getRightPosition());
+        System.out.println("Distance target: " + this.DISTANCE);
+        System.out.println();
     }
 
     @Override
@@ -86,14 +106,32 @@ public class DriveStraightWithGyroCommand extends Command {
     @Override
     public void interrupted() {
         System.out.println("interupted");
+        print();
         end();
     }
 
     @Override
     protected boolean isFinished() {
         double dist = DrivetrainSubsystem.distanceToRotation(this.DISTANCE);
-        return ((Math.abs(Robot.driveSubSys.getLeftPosition() - dist)) < Robot.driveSubSys.ALLOWABLE_ERROR)
-                || (Math.abs(Robot.driveSubSys.getRightPosition() - dist) < Robot.driveSubSys.ALLOWABLE_ERROR);
+        if (this.isTimedOut()) {
+            System.out.println("Timed out");
+            print();
+            return true;
+        }
+        if (((Math.abs(Robot.driveSubSys.getLeftPosition() - dist)) < Robot.driveSubSys.ALLOWABLE_ERROR)) {
+            System.out.println("Left Error Condition triggered is Finished");
+            System.out.println("Allowable Error: " + Robot.driveSubSys.ALLOWABLE_ERROR);
+            print();
+            return true;
+        }
+
+        if (((Math.abs(Robot.driveSubSys.getRightPosition() - dist)) < Robot.driveSubSys.ALLOWABLE_ERROR)) {
+            System.out.println("Right Error Condition triggered is Finished");
+            System.out.println("Allowable Error: " + Robot.driveSubSys.ALLOWABLE_ERROR);
+            print();
+            return true;
+        }
+        return false;
     }
 
 }
