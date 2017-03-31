@@ -54,11 +54,10 @@ public class DriveStraightWithGyroCommand extends Command {
     protected void pHeading() {
         System.out.println("PHeading Entered");
         print();
-        double process = this.gyro.GetFusedHeading(new FusionStatus()) % 360;
-        double error = head - process;
-        System.out.println("Head: " + head);
-        System.out.println("Process: " + process);
-        System.out.println("Error: " + error);
+        double error = head - this.gyro.GetFusedHeading(new FusionStatus()) % 360;
+        System.out.print("Target Heading" + this.head);
+        System.out.print(" Current Heading: " + this.gyro.GetFusedHeading(new FusionStatus()) % 360);
+        System.out.println(" Error: " + error);
         if (Math.abs(error) > this.TOLERANCE) {
             // Updates right voltage value
             // will allow me to change the voltage based on error
@@ -85,14 +84,15 @@ public class DriveStraightWithGyroCommand extends Command {
 
     public void print() {
         double dist = DrivetrainSubsystem.distanceToRotation(this.DISTANCE);
-        System.out.println(" Heading: " + Robot.driveSubSys.getImu().GetFusedHeading(new FusionStatus()));
-        System.out.println(" Left Error: " + (Robot.driveSubSys.getLeftPosition() - dist));
-        System.out.println(" Right Error: " + (Robot.driveSubSys.getRightPosition() - dist));
-        System.out.println(" Left Voltage: " + (this.leftV));
-        System.out.println(" Right Voltage: " + (this.rightV));
-        System.out.println("Left Position: " + Robot.driveSubSys.getLeftPosition());
-        System.out.println("Right Position: " + Robot.driveSubSys.getRightPosition());
-        System.out.println("Distance target: " + this.DISTANCE);
+        System.out.print("Target Heading: " + this.head); 
+        System.out.print(" Heading: " + Robot.driveSubSys.getImu().GetFusedHeading(new FusionStatus()));
+        System.out.print(" Left Error: " + (Robot.driveSubSys.getLeftPosition() - dist));
+        System.out.print(" Right Error: " + (Robot.driveSubSys.getRightPosition() - dist));
+        System.out.print(" Left Voltage: " + (this.leftV));
+        System.out.print(" Right Voltage: " + (this.rightV));
+        System.out.print(" Left Position: " + Robot.driveSubSys.getLeftPosition());
+        System.out.print(" Right Position: " + Robot.driveSubSys.getRightPosition());
+        System.out.print(" Distance target: " + this.DISTANCE);
         System.out.println();
     }
 
