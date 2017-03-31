@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class DrivetrainSubsystem extends Subsystem {
 
     public final int ALLOWABLE_ERROR = 200;
-    public final double error;
+    public final double error = 1.0 / (Math.PI * WHEEL_DIAMETER * DRIVE_RATIO) * DRIVE_CONSTANT;
 
     private final double P_CONSTANT = 0.05;
     private final double I_CONSTANT = 0.00005;
@@ -50,7 +50,6 @@ public class DrivetrainSubsystem extends Subsystem {
     private double dist;
 
     public DrivetrainSubsystem() {
-        this.error = (int) DrivetrainSubsystem.distanceToRotation(1);
         this.leftTalons = new CANTalon[RobotMap.LEFT_DRIVE_PORTS.length];
         this.rightTalons = new CANTalon[RobotMap.RIGHT_DRIVE_PORTS.length];
 

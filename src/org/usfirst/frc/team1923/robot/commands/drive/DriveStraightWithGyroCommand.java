@@ -16,14 +16,22 @@ public class DriveStraightWithGyroCommand extends Command {
     private double head;
 
     // TODO tune values
-    private final double P_CONST = 0.070;
+    private final double P_CONST = 0.70;
     private final double CONTROLLER_BIAS = 6;
     private final double TOLERANCE = 0.100;
     private final double DISTANCE;
+    private final double initialDistL;
+    private final double initialDistR;
+    private final double targetL;
+    private final double targetR;
 
     public DriveStraightWithGyroCommand(double distance) {
         this.requires(Robot.driveSubSys);
+        initialDistL = Robot.driveSubSys.getLeftPosition();
+        initialDistR = Robot.driveSubSys.getLeftPosition();
         this.DISTANCE = distance;
+        targetL = this.DISTANCE + initialDistL;
+        targetR = this.DISTANCE + initialDistR;
         this.setTimeout(Math.abs(distance) * 0.05 + 2);
         this.gyro = Robot.driveSubSys.getImu();
         // initial heading set
@@ -36,19 +44,23 @@ public class DriveStraightWithGyroCommand extends Command {
     public void initialize() {
         System.out.println("init Entered");
         print();
-        Robot.driveSubSys.resetPosition();
+        // try {
+        // Robot.driveSubSys.resetPosition();
+        // Thread.sleep(250);
+        // } catch (InterruptedException e) {
+        // // TODO Auto-generated catch block
+        // e.printStackTrace();
+        // }
         print();
         System.out.println("init Exited");
     }
 
     /*
-     * The Proportional Algorithm for Gyro
-     *  ============================= 
-     *  This gyro Proportional-Only controller computes a output action every loop sample time T as:
-     *   Final Value = bias + C ∙ e, Where: 
-     *   bias = controller bias or null value 
-     *   C = constant parameter 
-     *   e = controller error = SP - PV (SP = set point, PV = measured process variable)
+     * The Proportional Algorithm for Gyro ============================= This
+     * gyro Proportional-Only controller computes a output action every loop
+     * sample time T as: Final Value = bias + C ∙ e, Where: bias = controller
+     * bias or null value C = constant parameter e = controller error = SP - PV
+     * (SP = set point, PV = measured process variable)
      */
 
     protected void pHeading() {
@@ -118,16 +130,16 @@ public class DriveStraightWithGyroCommand extends Command {
             print();
             return true;
         }
-        if (((Math.abs(Robot.driveSubSys.getLeftPosition() - dist)) < Robot.driveSubSys.ALLOWABLE_ERROR)) {
+        if (((Math.abs(Robot.driveSubSys.getLeftPosition() - this.targetL)) < Robot.driveSubSys.error)) {
             System.out.println("Left Error Condition triggered is Finished");
-            System.out.println("Allowable Error: " + Robot.driveSubSys.ALLOWABLE_ERROR);
+            System.out.println("Allowable Error: " + Robot.driveSubSys.error);
             print();
             return true;
         }
 
-        if (((Math.abs(Robot.driveSubSys.getRightPosition() - dist)) < Robot.driveSubSys.ALLOWABLE_ERROR)) {
+        if (((Math.abs(Robot.driveSubSys.getRightPosition() - this.targetR)) < Robot.driveSubSys.error)) {
             System.out.println("Right Error Condition triggered is Finished");
-            System.out.println("Allowable Error: " + Robot.driveSubSys.ALLOWABLE_ERROR);
+            System.out.println("Allowable Error: " + Robot.driveSubSys.error);
             print();
             return true;
         }
