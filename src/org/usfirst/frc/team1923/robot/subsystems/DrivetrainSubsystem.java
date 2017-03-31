@@ -17,7 +17,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class DrivetrainSubsystem extends Subsystem {
 
-    public final int ALLOWABLE_ERROR = 400;
+    public final int ALLOWABLE_ERROR = 200;
+    public final double error;
 
     private final double P_CONSTANT = 0.05;
     private final double I_CONSTANT = 0.00005;
@@ -49,6 +50,7 @@ public class DrivetrainSubsystem extends Subsystem {
     private double dist;
 
     public DrivetrainSubsystem() {
+        this.error = (int) DrivetrainSubsystem.distanceToRotation(1);
         this.leftTalons = new CANTalon[RobotMap.LEFT_DRIVE_PORTS.length];
         this.rightTalons = new CANTalon[RobotMap.RIGHT_DRIVE_PORTS.length];
 
@@ -294,14 +296,6 @@ public class DrivetrainSubsystem extends Subsystem {
 
     public void setDistance(double d) {
         dist = d;
-    }
-
-    public double getManualErrorLeft() {
-        return distanceToRotation(dist) - leftTalons[0].getEncPosition();
-    }
-
-    public double getManualErrorRight() {
-        return distanceToRotation(dist) - rightTalons[0].getEncPosition();
     }
 
     public void TalonsInit() {
