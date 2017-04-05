@@ -2,6 +2,7 @@ package org.usfirst.frc.team1923.robot.commands.vision;
 
 import org.usfirst.frc.team1923.robot.Robot;
 import org.usfirst.frc.team1923.robot.RobotMap;
+import org.usfirst.frc.team1923.robot.commands.drive.DriveTimeCommand;
 
 // import com.sun.webkit.Timer;
 
@@ -48,7 +49,15 @@ public class TeleopVisionAlignCommand extends Command {
         // new VisionAlignCommand(); TODO: Change to only run when needed to not
         // waste processor cycles
         Robot.visionSubSys.refresh();
-        if (Robot.visionSubSys.dist >= dist) {
+        if (dist < 0) {
+            new DriveTimeCommand(0.6, 2).start();
+            try {
+                Thread.sleep(13000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else if (Robot.visionSubSys.dist >= dist) {
             if (Robot.visionSubSys.turn < -1) {
                 power = 0;
                 turn = 0;

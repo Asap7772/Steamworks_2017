@@ -1,7 +1,6 @@
 package org.usfirst.frc.team1923.robot.commands.drive;
 
 import org.usfirst.frc.team1923.robot.Robot;
-import org.usfirst.frc.team1923.robot.subsystems.DrivetrainSubsystem;
 
 import com.ctre.CANTalon.TalonControlMode;
 import com.ctre.PigeonImu;
@@ -27,14 +26,21 @@ public class DriveStraightWithGyroCommand extends Command {
 
     public DriveStraightWithGyroCommand(double distance) {
         this.requires(Robot.driveSubSys);
-        initialDistL = Robot.driveSubSys.getLeftPosition();
-        initialDistR = Robot.driveSubSys.getLeftPosition();
         this.DISTANCE = distance;
-        targetL = this.DISTANCE + initialDistL;
-        targetR = this.DISTANCE + initialDistR;
+
+        // Left target set
+        initialDistL = Robot.driveSubSys.getLeftPosition();
+        targetL = distance + initialDistL;
+
+        // Right target set
+        initialDistR = Robot.driveSubSys.getLeftPosition();
+        targetR = distance + initialDistR;
+
+        // timeout set
         this.setTimeout(Math.abs(distance) * 0.05 + 2);
-        this.gyro = Robot.driveSubSys.getImu();
+
         // initial heading set
+        this.gyro = Robot.driveSubSys.getImu();
         this.head = this.gyro.GetFusedHeading(new FusionStatus());
         System.out.println("constructor");
         print();
@@ -42,8 +48,6 @@ public class DriveStraightWithGyroCommand extends Command {
 
     @Override
     public void initialize() {
-        System.out.println("init Entered");
-        print();
         // try {
         // Robot.driveSubSys.resetPosition();
         // Thread.sleep(250);
@@ -51,8 +55,10 @@ public class DriveStraightWithGyroCommand extends Command {
         // // TODO Auto-generated catch block
         // e.printStackTrace();
         // }
-        print();
-        System.out.println("init Exited");
+        // System.out.println("init Entered");
+        // print();
+        // System.out.println("init Exited");
+        // print();
     }
 
     /*
@@ -95,16 +101,15 @@ public class DriveStraightWithGyroCommand extends Command {
     }
 
     public void print() {
-        double dist = DrivetrainSubsystem.distanceToRotation(this.DISTANCE);
-        System.out.print("Target Heading: " + this.head); 
-        System.out.print(" Heading: " + Robot.driveSubSys.getImu().GetFusedHeading(new FusionStatus()));
-        System.out.print(" Left Error: " + (Robot.driveSubSys.getLeftPosition() - dist));
-        System.out.print(" Right Error: " + (Robot.driveSubSys.getRightPosition() - dist));
-        System.out.print(" Left Voltage: " + (this.leftV));
-        System.out.print(" Right Voltage: " + (this.rightV));
-        System.out.print(" Left Position: " + Robot.driveSubSys.getLeftPosition());
-        System.out.print(" Right Position: " + Robot.driveSubSys.getRightPosition());
-        System.out.print(" Distance target: " + this.DISTANCE);
+        System.out.println("Target Heading: " + this.head);
+        System.out.println(" Heading: " + Robot.driveSubSys.getImu().GetFusedHeading(new FusionStatus()));
+        System.out.println(" Left Error: " + (this.targetL - Robot.driveSubSys.getLeftPosition()));
+        System.out.println(" Right Error: " + (this.targetR - Robot.driveSubSys.getRightPosition()));
+        System.out.println(" Left Voltage: " + (this.leftV));
+        System.out.println(" Right Voltage: " + (this.rightV));
+        System.out.println(" Left Position: " + Robot.driveSubSys.getLeftPosition());
+        System.out.println(" Right Position: " + Robot.driveSubSys.getRightPosition());
+        System.out.println(" Distance target: " + this.DISTANCE);
         System.out.println();
     }
 
@@ -124,7 +129,6 @@ public class DriveStraightWithGyroCommand extends Command {
 
     @Override
     protected boolean isFinished() {
-        double dist = DrivetrainSubsystem.distanceToRotation(this.DISTANCE);
         if (this.isTimedOut()) {
             System.out.println("Timed out");
             print();
