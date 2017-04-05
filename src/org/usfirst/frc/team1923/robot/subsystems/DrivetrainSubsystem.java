@@ -16,8 +16,9 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * Class that houses the motors and shifters
  */
 public class DrivetrainSubsystem extends Subsystem {
-
     public final int ALLOWABLE_ERROR = 300;
+    public final double error = 1.0 / (Math.PI * WHEEL_DIAMETER * DRIVE_RATIO) * DRIVE_CONSTANT;
+
 
     private final double P_CONSTANT = 0.4;
     private final double I_CONSTANT = 0.0001;
@@ -36,6 +37,9 @@ public class DrivetrainSubsystem extends Subsystem {
     private static final double DRIVE_CONSTANT = 1;
     private static final double TURNING_CONSTANT = 1.12;
 
+    // ramp rate for voltage
+    private static final double VOLTAGE_RAMP_RATE = 6.0;
+
     // Arrays of talons to group them together
     // The first element will always be the master Talon, the subsequent ones
     // will follow
@@ -43,6 +47,7 @@ public class DrivetrainSubsystem extends Subsystem {
     private DoubleSolenoid shifter;
     private DoubleSolenoid shiftOmnis;
     private PigeonImu imu;
+    private double dist;
 
     public DrivetrainSubsystem() {
         this.leftTalons = new CANTalon[RobotMap.LEFT_DRIVE_PORTS.length];
@@ -62,8 +67,11 @@ public class DrivetrainSubsystem extends Subsystem {
         this.shiftOmnis = new DoubleSolenoid(RobotMap.PCM_MODULE_NUM, RobotMap.OMNI_FORWARD_PORT, RobotMap.OMNI_BACKWARD_PORT);
 
         setToFollow();
+
         setReverse();
         // configPID();
+        configPID();
+        TalonsInit();
     }
 
     private void setToFollow() {
@@ -294,6 +302,23 @@ public class DrivetrainSubsystem extends Subsystem {
         }
 
         this.rightTalons[0].set(power);
+    }
+
+    public void driveStraightGyroDistance(double dist) {
+
+    }
+
+    public void setDistance(double d) {
+        dist = d;
+    }
+
+    public void TalonsInit() {
+        leftTalons[0].configNominalOutputVoltage(+0.0f, -0.0f);
+        leftTalons[0].configPeakOutputVoltage(+12.0f, -12.0f);
+        rightTalons[0].configNominalOutputVoltage(+0.0f, -0.0f);
+        rightTalons[0].configPeakOutputVoltage(+12.0f, -12.0f);
+        rightTalons[0].setCloseLoopRampRate(VOLTAGE_RAMP_RATE);
+        leftTalons[0].setCloseLoopRampRate(VOLTAGE_RAMP_RATE);
     }
 
     public void stop() {

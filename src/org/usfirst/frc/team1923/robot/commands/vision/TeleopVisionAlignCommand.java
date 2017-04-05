@@ -23,6 +23,8 @@ public class TeleopVisionAlignCommand extends Command {
     public TeleopVisionAlignCommand() {
         // Use requires() here to declare subsystem dependencies
         this(false);
+        requires(Robot.visionSubSys);
+        requires(Robot.driveSubSys);
     }
 
     public TeleopVisionAlignCommand(boolean feeder) {

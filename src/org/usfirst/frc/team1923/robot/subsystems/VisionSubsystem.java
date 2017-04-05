@@ -1,7 +1,6 @@
 package org.usfirst.frc.team1923.robot.subsystems;
 
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team1923.robot.RobotMap;
@@ -96,8 +95,8 @@ public class VisionSubsystem extends Subsystem {
                 sumx = 0;
                 sumw = 0;
                 if (!pipe.filterContoursOutput().isEmpty()) {
-                    for (MatOfPoint a : pipe.filterContoursOutput()) {
-                        r = Imgproc.boundingRect(a);
+                    for (int i = 0; i < 2; i++) {
+                        r = Imgproc.boundingRect(pipe.filterContoursOutput().get(i));
                         contourX = r.x + (r.width / 2);
                         sumx += contourX;
                         sumw += r.width;
