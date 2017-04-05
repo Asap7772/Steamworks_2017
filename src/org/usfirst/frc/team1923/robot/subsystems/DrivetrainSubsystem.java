@@ -1,7 +1,7 @@
 package org.usfirst.frc.team1923.robot.subsystems;
 
 import org.usfirst.frc.team1923.robot.RobotMap;
-import org.usfirst.frc.team1923.robot.commands.drive.ArcadeRawDriveCommand;
+import org.usfirst.frc.team1923.robot.commands.drive.RawDriveCommand;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
@@ -16,12 +16,12 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * Class that houses the motors and shifters
  */
 public class DrivetrainSubsystem extends Subsystem {
-
-    public final int ALLOWABLE_ERROR = 200;
+    public final int ALLOWABLE_ERROR = 300;
     public final double error = 1.0 / (Math.PI * WHEEL_DIAMETER * DRIVE_RATIO) * DRIVE_CONSTANT;
 
-    private final double P_CONSTANT = 0.05;
-    private final double I_CONSTANT = 0.00005;
+
+    private final double P_CONSTANT = 0.4;
+    private final double I_CONSTANT = 0.0001;
     private final double D_CONSTANT = 0;
     private final double F_CONSTANT = 0;
     private final boolean LEFT_REVERSED = true;
@@ -67,6 +67,9 @@ public class DrivetrainSubsystem extends Subsystem {
         this.shiftOmnis = new DoubleSolenoid(RobotMap.PCM_MODULE_NUM, RobotMap.OMNI_FORWARD_PORT, RobotMap.OMNI_BACKWARD_PORT);
 
         setToFollow();
+
+        setReverse();
+        // configPID();
         configPID();
         TalonsInit();
     }
@@ -126,6 +129,10 @@ public class DrivetrainSubsystem extends Subsystem {
         this.rightTalons[0].setAllowableClosedLoopErr(ALLOWABLE_ERROR);
 
         setMasterToMode(TalonControlMode.PercentVbus);
+        setReverse();
+    }
+
+    public void setReverse() {
 
         this.leftTalons[0].set(0.0);
         this.leftTalons[0].reverseOutput(LEFT_REVERSED);
@@ -213,6 +220,14 @@ public class DrivetrainSubsystem extends Subsystem {
 
     public double getRightPosition() {
         return this.rightTalons[0].getPosition();
+    }
+
+    public int getLeftEncPosition() {
+        return -this.leftTalons[0].getEncPosition();
+    }
+
+    public int getRightEncPosition() {
+        return this.rightTalons[0].getEncPosition();
     }
 
     public double getLeftSpeed() {
@@ -312,7 +327,7 @@ public class DrivetrainSubsystem extends Subsystem {
 
     @Override
     public void initDefaultCommand() {
-        setDefaultCommand(new ArcadeRawDriveCommand());
+        setDefaultCommand(new RawDriveCommand());
     }
 
     public static double angleToDistance(double angle) {
@@ -321,6 +336,15 @@ public class DrivetrainSubsystem extends Subsystem {
 
     public static double distanceToRotation(double distance) {
         return distance / (Math.PI * WHEEL_DIAMETER * DRIVE_RATIO) * DRIVE_CONSTANT;
+    }
+
+    public void configMM() {
+        leftTalons[0].setMotionMagicAcceleration(500);
+        rightTalons[0].setMotionMagicAcceleration(500);
+
+        leftTalons[0].setMotionMagicCruiseVelocity(800); // TODO: Is this in
+                                                         // rpm?
+        rightTalons[0].setMotionMagicCruiseVelocity(800);
     }
 
 }
