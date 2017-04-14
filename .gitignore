@@ -14,3 +14,5 @@ sysProps.xml
 *.iml
 *.ipr
 *.iws
+
+.DS_Store
