@@ -28,6 +28,17 @@ public class RobotMap {
     public static final int[] RIGHT_DRIVE_PORTS = { 1, 2, 3 };
 
     /**
+     * Port for the talon that control the shooter motor
+     */
+    public static final int SHOOTER_PORT = 9;
+
+    /**
+     * Shooter actuator piston ports.
+     */
+    public static final int SHOOTER_FORWARD_PORT = 8;
+    public static final int SHOOTER_BACKWARD_PORT = 9;
+
+    /**
      * Ports for the talons that control the climbing motors.
      */
     public static final int LEFT_CLIMB_PORT = 5;

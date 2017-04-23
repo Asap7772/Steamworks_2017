@@ -6,6 +6,9 @@ import org.usfirst.frc.team1923.robot.commands.drive.ShiftOmniCommand;
 import org.usfirst.frc.team1923.robot.commands.gear.GearCommand;
 import org.usfirst.frc.team1923.robot.commands.gear.GearSetHomeCommand;
 import org.usfirst.frc.team1923.robot.commands.gear.SlideCommand;
+import org.usfirst.frc.team1923.robot.commands.shooter.IntakeShooterCommand;
+import org.usfirst.frc.team1923.robot.commands.shooter.IntakeState;
+import org.usfirst.frc.team1923.robot.commands.shooter.ShiftShooterCommand;
 import org.usfirst.frc.team1923.robot.commands.vision.VisionAlignCommand;
 import org.usfirst.frc.team1923.robot.commands.vision.VisionProcessing;
 import org.usfirst.frc.team1923.robot.utils.controller.PS4Controller;
@@ -41,6 +44,13 @@ public class OI {
         this.op.x.whenActive(new SlideCommand());
         this.op.y.whenActive(new GearCommand());
         this.op.b.whenActive(new GearSetHomeCommand());
+
+        this.op.lb.whenActive(new ShiftShooterCommand(true));
+        this.op.rb.whenActive(new ShiftShooterCommand(false));
+
+        this.op.lt.whileHeld(new IntakeShooterCommand(IntakeState.OUTAKE));
+        this.op.lt.whileHeld(new IntakeShooterCommand(IntakeState.INTAKE));
+        this.op.lt.whenReleased(new IntakeShooterCommand()); //so that the intake can stop
 
         // Vision Commands
         Command pegAlign = new VisionAlignCommand(false);

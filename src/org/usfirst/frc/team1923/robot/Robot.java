@@ -10,6 +10,7 @@ import org.usfirst.frc.team1923.robot.subsystems.ClimberSubsystem;
 import org.usfirst.frc.team1923.robot.subsystems.DebugSubsystem;
 import org.usfirst.frc.team1923.robot.subsystems.DrivetrainSubsystem;
 import org.usfirst.frc.team1923.robot.subsystems.GearSubsystem;
+import org.usfirst.frc.team1923.robot.subsystems.ShooterSubsystem;
 import org.usfirst.frc.team1923.robot.subsystems.VisionSubsystem;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -33,6 +34,7 @@ public class Robot extends IterativeRobot {
     public static DrivetrainSubsystem driveSubSys;
     public static GearSubsystem gearSubSys;
     public static VisionSubsystem visionSubSys;
+    public static ShooterSubsystem shooterSubSys;
     public static OI oi;
 
     private Command autonomousCommand;
@@ -48,6 +50,7 @@ public class Robot extends IterativeRobot {
         climbSubSys = new ClimberSubsystem();
         visionSubSys = new VisionSubsystem();
         debugSubSys = new DebugSubsystem();
+        shooterSubSys = new ShooterSubsystem();
 
         oi = new OI();
 
