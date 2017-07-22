@@ -6,9 +6,8 @@ import org.usfirst.frc.team1923.robot.commands.drive.ShiftOmniCommand;
 import org.usfirst.frc.team1923.robot.commands.gear.GearCommand;
 import org.usfirst.frc.team1923.robot.commands.gear.GearSetHomeCommand;
 import org.usfirst.frc.team1923.robot.commands.gear.SlideCommand;
-import org.usfirst.frc.team1923.robot.commands.shooter.IntakeShooterCommand;
-import org.usfirst.frc.team1923.robot.commands.shooter.IntakeState;
-import org.usfirst.frc.team1923.robot.commands.shooter.ShiftShooterCommand;
+import org.usfirst.frc.team1923.robot.commands.shooter.IndexCommand;
+import org.usfirst.frc.team1923.robot.commands.shooter.ShooterCommand;
 import org.usfirst.frc.team1923.robot.commands.vision.VisionAlignCommand;
 import org.usfirst.frc.team1923.robot.commands.vision.VisionProcessing;
 import org.usfirst.frc.team1923.robot.utils.controller.PS4Controller;
@@ -45,12 +44,8 @@ public class OI {
         this.op.y.whenActive(new GearCommand());
         this.op.b.whenActive(new GearSetHomeCommand());
 
-        this.op.lb.whenActive(new ShiftShooterCommand(true));
-        this.op.rb.whenActive(new ShiftShooterCommand(false));
-
-        this.op.lt.whileHeld(new IntakeShooterCommand(IntakeState.OUTAKE));
-        this.op.lt.whileHeld(new IntakeShooterCommand(IntakeState.INTAKE));
-        this.op.lt.whenReleased(new IntakeShooterCommand()); //so that the intake can stop
+        this.driver.square.whenActive(new ShooterCommand(12000, 0));
+        this.driver.circle.whenActive(new IndexCommand(3));
 
         // Vision Commands
         Command pegAlign = new VisionAlignCommand(false);

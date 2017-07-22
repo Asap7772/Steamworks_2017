@@ -1,72 +1,49 @@
 package org.usfirst.frc.team1923.robot.subsystems;
 
 import org.usfirst.frc.team1923.robot.RobotMap;
-import org.usfirst.frc.team1923.robot.commands.shooter.IntakeState;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.CANTalon.TalonControlMode;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShooterSubsystem extends Subsystem {
 
     // Talon that controls shooter motor
-    private CANTalon shooterIntake;
-    private IntakeState currState;
+    private CANTalon flyWheel;
+    private CANTalon indexer;
 
-    // Talon that controls shooter piston
-    private DoubleSolenoid shooterPiston;
-    private boolean pistonUp;
+    private final double P_CONSTANT = 0;
+    private final double I_CONSTANT = 0;
+    private final double D_CONSTANT = 0;
+    private final double FEED_FORWARD = 0.4;
+    private final int tolerance = 1;
 
     // constructor initializes the talon, the solenoid and supporting variables
     public ShooterSubsystem() {
-        shooterIntake = new CANTalon(RobotMap.SHOOTER_PORT); // defaulted on
-                                                             // Percent V-Bus
-
-        currState = IntakeState.NEUTRAL;
-        shooterPiston = new DoubleSolenoid(RobotMap.PCM_MODULE_NUM, RobotMap.SHOOTER_FORWARD_PORT, RobotMap.SHOOTER_BACKWARD_PORT);
-        pistonUp = false;
+        flyWheel = new CANTalon(RobotMap.SHOOTER_PORT);
+        indexer = new CANTalon(RobotMap.INDEXER_PORT);
+        flyWheel.changeControlMode(TalonControlMode.Speed);
+        flyWheel.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        flyWheel.configPeakOutputVoltage(12, -12);
+        flyWheel.configNominalOutputVoltage(0, 0);
+        flyWheel.setPID(P_CONSTANT, I_CONSTANT, D_CONSTANT);
+        flyWheel.setF(FEED_FORWARD);
+        flyWheel.setAllowableClosedLoopErr(tolerance);
+        flyWheel.reverseOutput(false);
+        flyWheel.reverseSensor(false);
     }
 
-    public void intake() {
-        currState = IntakeState.INTAKE;
-        shooterIntake.set(-1);
+    public void setIndexerVoltage(double voltage) {
+        indexer.set(voltage);
+        SmartDashboard.putNumber("Indexer Voltage", indexer.getOutputVoltage());
     }
 
-    public void neutral() {
-        currState = IntakeState.NEUTRAL;
-        shooterIntake.set(0);
-    }
-
-    public void outake() {
-        currState = IntakeState.OUTAKE;
-        shooterIntake.set(1);
-    }
-
-    public void toggle() {
-        if (pistonUp)
-            pistonDown();
-        else pistonUp();
-    }
-
-    public void pistonUp() {
-        if (!pistonUp) {
-            shooterPiston.set(DoubleSolenoid.Value.kForward);
-        }
-    }
-
-    public void pistonDown() {
-        if (pistonUp) {
-            shooterPiston.set(DoubleSolenoid.Value.kReverse);
-        }
-    }
-
-    public IntakeState getIntakeState() {
-        return currState;
-    }
-
-    public String getPistonState() {
-        return pistonUp ? "Up" : "Down";
+    public void setFlywheelSpeed(double speed) {
+        flyWheel.set(speed);
+        SmartDashboard.putNumber("Encode Velocity", flyWheel.getSpeed());
     }
 
     @Override

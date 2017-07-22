@@ -45,11 +45,6 @@ public class ClimberSubsystem extends Subsystem {
         return this.leftClimb.getOutputCurrent();
     }
 
-    public double getMaxCurrent() {
-        return Math.max(this.leftClimb.getOutputCurrent(), this.rightClimb.getOutputCurrent());
-    }
-    // SmartDashboard.putNumber("Max Climber Amperage: " , getMaxCurrent());
-
     public double getVoltage() {
         return this.leftClimb.getOutputVoltage();
     }
